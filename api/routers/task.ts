@@ -1,22 +1,26 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import Task from '../models/Task';
-import auth from '../middleware/auth';
+import auth, {RequestWithUser} from '../middleware/auth';
 
 const taskRouter = express.Router();
 
-taskRouter.post('/', auth, async (req, res, next) =>{
+taskRouter.post('/', auth, async (req: RequestWithUser, res, next) =>{
   try {
-    const taskData= new Task ({
-      user: req.body._id,
+
+    const user = (req as RequestWithUser).user;
+    const taskData = new Task({
+      user: user,
       title: req.body.title,
       description: req.body.description,
-      status: req.body.status,
+      status: req.body.status
     });
 
-    const task = new Task(taskData)
-    await task.save();
-    return res.send(task);
+    console.log(taskData);
+    console.log('user', user);
+    // const task = new Task(taskData)
+    await taskData.save();
+    return res.send(taskData);
   }catch (e){
 
     if (e instanceof mongoose.Error.ValidationError) {
