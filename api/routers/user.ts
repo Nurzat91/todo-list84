@@ -23,7 +23,6 @@ userRouter.post('/', async (req, res, next) =>{
   }
 });
 
-
 userRouter.post('/sessions', async (req, res, next) =>{
   try {
 

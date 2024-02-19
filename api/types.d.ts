@@ -12,3 +12,4 @@ interface UserMethods{
 }
 
 type UserModel = Model<UserFields, {}, UserMethods>;
+
