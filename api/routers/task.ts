@@ -25,4 +25,14 @@ taskRouter.post('/', auth, async (req, res, next) =>{
     next(e);
   }
 });
+
+taskRouter.get('/', async (req, res, next) =>{
+  try{
+    const tasks = await Task.find();
+    return res.send(tasks);
+
+  }catch (e){
+    next(e);
+  }
+});
 export default taskRouter;
