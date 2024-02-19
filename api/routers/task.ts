@@ -1,5 +1,5 @@
 import express from 'express';
-import mongoose from 'mongoose';
+import mongoose, {Types} from 'mongoose';
 import Task from '../models/Task';
 import auth, {RequestWithUser} from '../middleware/auth';
 
@@ -18,7 +18,6 @@ taskRouter.post('/', auth, async (req: RequestWithUser, res, next) =>{
 
     console.log(taskData);
     console.log('user', user);
-    // const task = new Task(taskData)
     await taskData.save();
     return res.send(taskData);
   }catch (e){
@@ -34,6 +33,45 @@ taskRouter.get('/', async (req, res, next) =>{
   try{
     const tasks = await Task.find();
     return res.send(tasks);
+
+  }catch (e){
+    next(e);
+  }
+});
+
+taskRouter.put('/:id', async (req, res, next) =>{
+  try{
+    const taskId = req.params.id;
+
+    let _id: Types.ObjectId;
+    try {
+      _id = new Types.ObjectId(taskId);
+    } catch {
+      return res.status(404).send({ error: 'Wrong Id!' });
+    }
+
+    const task = await Task.findById(_id);
+
+    if (!task) {
+      return res.status(404).send({ error: 'Task not found' });
+    }
+
+
+    const { title, description, status } = req.body;
+    if (title) task.title = title;
+    if (description) task.description = description;
+    if (status) task.status = status;
+
+    const updatedTask = await task.save();
+    return res.json(updatedTask);
+
+  }catch (e){
+    next(e);
+  }
+});
+
+taskRouter.delete('/:id',  async (req, res, next) =>{
+  try{
 
   }catch (e){
     next(e);
